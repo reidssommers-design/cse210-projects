@@ -5,21 +5,23 @@ class Program
 {
     static void Main(string[] args)
     {
+        Resume resume1 = new Resume();
+        resume1._name = Utils.Input("Name? ");
+
         Job job1 = new Job();
-        job1._company = "Microsoft";
-        job1._jobTitle = Input("Title? ");
-        job1._startYear = Input("Start year? ");
-        job1._endYear = Input("End year? ");
-
         Job job2 = new Job();
-        job2._company = "Apple";
+        // Job job3 = new Job();
 
-        job1.Display();
-    }
+        job1.MakeJob();
+        job2.MakeJob();
+        // job3.MakeJob();
 
-    static string Input(string prompt)
-    {
-        Console.Write(prompt);
-        return Console.ReadLine();
+        resume1._jobs.Add(job1);
+        resume1._jobs.Add(job2);
+        // resume1._jobs.Add(job3);
+        
+        resume1.Display();
+
+        Console.WriteLine(resume1._jobs[0]._jobTitle); //Chained command
     }
 }
