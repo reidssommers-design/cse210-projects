@@ -15,7 +15,7 @@ public class Journal
 
         entry._prompt = _promptGenerator.GetRandomPrompt();
         Console.WriteLine(entry._prompt);
-
+        
         entry._response = Utils.Input("> ");
 
         _entries.Add(entry);
@@ -31,11 +31,28 @@ public class Journal
 
     public void SaveToFile(string filename)
     {
-        
+        using (StreamWriter writer = new StreamWriter(filename))
+        {
+            foreach (Entry entry in _entries)
+            {
+                writer.WriteLine(entry.ToCsvLine());
+            }
+        }
+
+        Console.WriteLine($"Journal saved to {filename}.");
     }
 
     public void LoadFromFile(string filename)
     {
-        
+        _entries = new List<Entry>();
+
+        string[] lines = File.ReadAllLines(filename);
+
+        foreach (string line in lines)
+        {
+            _entries.Add(Entry.FromCsvLine(line));
+        }
+
+        Console.WriteLine($"Journal loaded from {filename}.");
     }
 }
