@@ -31,7 +31,7 @@ public class Journal
 
     public void SaveToFile(string filename)
     {
-        using (StreamWriter writer = new StreamWriter(filename))
+        using (StreamWriter writer = new StreamWriter(filename))    //Based this section on the csv instruction video
         {
             foreach (Entry entry in _entries)
             {
@@ -44,6 +44,7 @@ public class Journal
 
     public void LoadFromFile(string filename)
     {
+        // more error handling
         if (!File.Exists(filename))
         {
             Console.WriteLine($"Could not find a file named '{filename}'.");
