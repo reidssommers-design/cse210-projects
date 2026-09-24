@@ -44,6 +44,12 @@ public class Journal
 
     public void LoadFromFile(string filename)
     {
+        if (!File.Exists(filename))
+        {
+            Console.WriteLine($"Could not find a file named '{filename}'.");
+            return;
+        }
+
         _entries = new List<Entry>();
 
         string[] lines = File.ReadAllLines(filename);
