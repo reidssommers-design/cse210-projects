@@ -30,11 +30,19 @@ class Program
             else if (choice == "3")
             {
                 string filename = Utils.Input("Filename? ");
+                if (!filename.EndsWith(".csv"))
+                {
+                    filename = filename + ".csv";
+                }
                 journal.SaveToFile(filename);
             }
             else if (choice == "4")
             {
                 string filename = Utils.Input("Filename? ");
+                if (!filename.EndsWith(".csv"))
+                {
+                    filename = filename + ".csv";
+                }
                 journal.LoadFromFile(filename);
             }
         }
