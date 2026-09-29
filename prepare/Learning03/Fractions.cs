@@ -4,7 +4,7 @@ public class Fraction
 {
     private int _num;   // numerator. 
     private int _den;   // denominator. 
-    
+
     public Fraction() 
     {
         _num = 1; 
@@ -18,6 +18,7 @@ public class Fraction
     public Fraction(int top, int bottom) 
     {
         _num = top; 
+        _den = 1;
         SetBottom(bottom);
     }
 
@@ -25,21 +26,13 @@ public class Fraction
     public int GetBottom() {return _den;}
     public void SetTop(int num) 
     {  
-        if (num.ToString() == "infinity")
-        {
-            Console.WriteLine("Cheater Cheater. You can't even do that.");
-        }
-        else
-        {
-            _num = num;
-        }
+        _num = num;
     }
     public void SetBottom(int den) 
     {   
         if (den == 0)
         {
             Console.WriteLine("Error, Denominator cannot be 0");
-            _den = 1;
             return;
         }
         else {

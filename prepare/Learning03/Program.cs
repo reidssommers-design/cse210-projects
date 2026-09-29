@@ -5,13 +5,13 @@ class Program
     static void Main(string[] args)
     {
         Random random = new Random();
+        Fraction fract = new Fraction();
 
         for (int x = 0; x < 20; x ++)
         {
             int top = random.Next(1, 11);
             int bottom = random.Next(1, 11);
 
-            Fraction fract = new Fraction();
             fract.SetTop(top);
             fract.SetBottom(bottom);
 
