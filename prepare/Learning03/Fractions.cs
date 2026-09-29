@@ -1,43 +1,37 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 public class Fraction
 {
-    private int _noom;
-    private int _denm;
+    private int _num;
+    private int _den;
 
-    public Fraction()
+    public Fraction() {_num = 1; _den = 1;}
+    public Fraction(int noom){_num = noom; _den = 1;}
+    public Fraction(int noom, int denm) {_num = noom; _den = denm;}
+
+    public int GetNum() {return _num;}
+    public void SetNum(int num) {_num = num;}
+    public int GetDen() {return _den;}
+    public void SetDen(int den) {_den = den;}
+
+    public string GetFractionString()
     {
-        _noom = 1;
-        _denm = 1;
+        return($"{_num}/{_den}");
     }
-    public Fraction(int noom)
+    public double GetDecimalVal()
     {
-        _noom = noom;
-        _denm = 1;
-    }
-    public Fraction(int noom, int denm)
-    {
-        _noom = noom;
-        _denm = denm;
+        return (double)_num/_den;
     }
 
-    private string CreateFract()
-    {
-        return _noom + "/" + _denm;
-    }
-    public void ReturnFract()
-    {
-        Console.WriteLine(CreateFract());
-        return;
-    }
     
     public void SetVar()
     {
         int noom = int.Parse(Utils.Input("Set X "));
         int denm = int.Parse(Utils.Input("Set y: "));
 
-        _noom = noom;
-        _denm = denm;
+        _num = noom;
+        _den = denm;
         return;
     }
 }
