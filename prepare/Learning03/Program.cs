@@ -1,26 +1,22 @@
 using System;
-using System.Runtime.Serialization;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Fraction firstFract = new Fraction();
-        firstFract.SetTop(5);
-        firstFract.SetBottom(4);
+        Random random = new Random();
 
-        int top = firstFract.GetTop();
-        Console.WriteLine(top);
-        Console.WriteLine(firstFract.GetBottom());
+        for (int x = 0; x < 20; x ++)
+        {
+            int top = random.Next(1, 11);
+            int bottom = random.Next(1, 11);
 
-        Console.WriteLine(firstFract.GetFractionString());
-        Console.WriteLine(firstFract.GetDecimalValue());
+            Fraction fract = new Fraction();
+            fract.SetTop(top);
+            fract.SetBottom(bottom);
 
-        Fraction second = new Fraction(6, 7);
-        Console.WriteLine(second.GetFractionString());
-
-        second.SetBottom(0);
-        Console.WriteLine(second.GetBottom());
+            Console.WriteLine($"Fraction {x + 1:00}: string {fract.GetFractionString(),-5} Number: {fract.GetDecimalValue():0.000}");
+        }
 
     }
 }

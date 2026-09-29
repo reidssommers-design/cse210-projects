@@ -2,9 +2,9 @@ using System;
 
 public class Fraction
 {
-    private int _num;   // numerator. I'm not going to call it 'top'
-    private int _den;   // denominator. Again, won't call it 'bottom'
-
+    private int _num;   // numerator. 
+    private int _den;   // denominator. 
+    
     public Fraction() 
     {
         _num = 1; 
@@ -49,12 +49,10 @@ public class Fraction
 
     public string GetFractionString()
     {
-        return($"{_num}/{_den}");
+        return ($"{_num}/{_den}");
     }
     public double GetDecimalValue()
     {
         return (double)_num/_den;
     }
-
-    
 }
