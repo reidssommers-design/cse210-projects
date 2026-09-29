@@ -21,9 +21,13 @@ public class Fraction
         _denm = denm;
     }
 
+    private string CreateFract()
+    {
+        return _noom + "/" + _denm;
+    }
     public void ReturnFract()
     {
-        Console.WriteLine($"{_noom}/{_denm}");
+        Console.WriteLine(CreateFract());
         return;
     }
     
