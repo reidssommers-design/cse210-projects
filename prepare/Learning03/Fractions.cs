@@ -1,37 +1,60 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 
 public class Fraction
 {
-    private int _num;
-    private int _den;
+    private int _num;   // numerator. I'm not going to call it 'top'
+    private int _den;   // denominator. Again, won't call it 'bottom'
 
-    public Fraction() {_num = 1; _den = 1;}
-    public Fraction(int noom){_num = noom; _den = 1;}
-    public Fraction(int noom, int denm) {_num = noom; _den = denm;}
+    public Fraction() 
+    {
+        _num = 1; 
+        _den = 1;
+    }
+    public Fraction(int top)
+    {
+        _num = top; 
+        _den = 1;
+    }
+    public Fraction(int top, int bottom) 
+    {
+        _num = top; 
+        SetBottom(bottom);
+    }
 
-    public int GetNum() {return _num;}
-    public void SetNum(int num) {_num = num;}
-    public int GetDen() {return _den;}
-    public void SetDen(int den) {_den = den;}
+    public int GetTop() {return _num;}
+    public int GetBottom() {return _den;}
+    public void SetTop(int num) 
+    {  
+        if (num.ToString() == "infinity")
+        {
+            Console.WriteLine("Cheater Cheater. You can't even do that.");
+        }
+        else
+        {
+            _num = num;
+        }
+    }
+    public void SetBottom(int den) 
+    {   
+        if (den == 0)
+        {
+            Console.WriteLine("Error, Denominator cannot be 0");
+            _den = 1;
+            return;
+        }
+        else {
+            _den = den;
+        }
+    }
 
     public string GetFractionString()
     {
         return($"{_num}/{_den}");
     }
-    public double GetDecimalVal()
+    public double GetDecimalValue()
     {
         return (double)_num/_den;
     }
 
     
-    public void SetVar()
-    {
-        int noom = int.Parse(Utils.Input("Set X "));
-        int denm = int.Parse(Utils.Input("Set y: "));
-
-        _num = noom;
-        _den = denm;
-        return;
-    }
 }
