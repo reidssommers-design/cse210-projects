@@ -32,7 +32,7 @@ public class Fraction
     {   
         if (den == 0)
         {
-            Console.WriteLine("Error, Denominator cannot be 0");
+            Console.WriteLine("ERROR: Denominator cannot be 0");
             return;
         }
         else {
@@ -42,10 +42,10 @@ public class Fraction
 
     public string GetFractionString()
     {
-        return ($"{_num}/{_den}");
+        return $"{_num}/{_den}";
     }
     public double GetDecimalValue()
     {
-        return (double)_num/_den;
+        return (double)_num / _den;
     }
 }
