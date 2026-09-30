@@ -49,3 +49,4 @@ public class Fraction
         return (double)_num / _den;
     }
 }
+
