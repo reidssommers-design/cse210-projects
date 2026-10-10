@@ -33,8 +33,14 @@ public abstract class Activity
     {
         Console.Clear();
         Console.WriteLine(_name + "\n" + _description);
+        int seconds;
         Console.Write("How long would you like your session to last? ");
-        _duration = int.Parse(Console.ReadLine());
+
+        while (!int.TryParse(Console.ReadLine(), out seconds) || seconds <= 0)
+        {
+            Console.Write("Please enter a whole number greater than 0: ");
+        }
+        _duration = seconds;
 
         Console.WriteLine("Get ready! ");
         ShowSpinner(2);
