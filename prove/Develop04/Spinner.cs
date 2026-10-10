@@ -6,11 +6,11 @@ public class Spinner()
 
     public void PrintSpinners()
     {
-        for (int i = 0; i < _spinners.Count * 2; i++)
+        for (int i = 0; i < _spinners.Count * 4; i++)
         {
-            Console.Write(_spinners[i % _spinners.Count]);
-            Thread.Sleep(100);
-            Console.Write("\b \b");
+            Console.Write(_spinners[i % _spinners.Count] + "   ");
+            Thread.Sleep(50);
+            Console.Write("\b\b\b\b");
         }
     }
 }
