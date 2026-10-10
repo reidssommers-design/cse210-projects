@@ -27,11 +27,10 @@ public abstract class Activity
     
     public void DisplayStartingMessage()
     {
-        int time = 0;
         Console.Clear();
-        Console.WriteLine(_name + _description);
+        Console.WriteLine(_name + "\n" + _description);
         Console.Write("How long would you like your session to last?");
-        time = int.Parse(Console.ReadLine());
+        _duration = int.Parse(Console.ReadLine());
 
         Console.WriteLine("Get ready! ");
         ShowSpinner(3);
@@ -40,9 +39,9 @@ public abstract class Activity
     public void DisplayEndingMessage()
     {
         Console.WriteLine("Congratulations!");
-        ShowSpinner(2);
+        ShowSpinner(1);
         Console.WriteLine($"You have completed another {_duration} seconds of the {_name} Activity.");
-        ShowSpinner(3);
+        ShowSpinner(1);
     }
 
     public void ShowCountDown(int seconds)

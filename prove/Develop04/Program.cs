@@ -22,7 +22,8 @@ class Program
             switch (opt)
             {
                 case 1:
-
+                    BreathingActivity breathe = new BreathingActivity();
+                    breathe.Run();
                     break;
                 case 2:
                     break;
