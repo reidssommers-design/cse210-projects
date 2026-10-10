@@ -11,22 +11,11 @@ public class BreathingActivity : Activity
     {
         DisplayStartingMessage();
         int totalDuration = GetDuration();
-        // each breath cycle is 5 seconds
-        // modulus division
-        // repeat and there MUST be one out for each in XD
 
-        //say duration is 20
-        // duration / 5 = 4 sessions
-        // print(breathin)
-        //countdown(littleDur)
-        // repeat
-
-        int sessions = totalDuration / 5; //floor function
+        int sessions = totalDuration / 5; //floor function from desmos
         if (sessions % 2 == 1)
         {
-            // the duration / 5 is an odd amount of in / out
-            // set sessions to sessions - 1
-            sessions = sessions - 1;
+            sessions--;
         }
         while (sessions > 0)
         {
