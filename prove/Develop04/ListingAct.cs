@@ -1,12 +1,10 @@
 using System;
 
-// Goal: have the user list as many good things as they can in one area until time runs out.
 public class ListingActivity : Activity
 {
     private List<string> _prompts;
     private int _count;
 
-    // Goal: set the name/description and fill _prompts.
     public ListingActivity() : base("Listing Activity", "This activity will help you reflect on the good things in your life by having you list as many things as you can in a certain area.")
     {
         _prompts = new List<string>
@@ -19,14 +17,12 @@ public class ListingActivity : Activity
         };
     }
 
-    // Goal: return one random prompt from _prompts.
     private string GetRandomPrompt()
     {
         int randomIndex = Random.Shared.Next(_prompts.Count);
         return _prompts[randomIndex];
     }
 
-    // Goal: show the prompt, then count down 5 seconds so the user can think before listing.
     private void DisplayPrompt()
     {
         Console.WriteLine(GetRandomPrompt());
@@ -34,27 +30,61 @@ public class ListingActivity : Activity
         ShowCountDown(5);
     }
 
-    // Goal: until the duration is up, read what the user types and add 1 to _count for each non-empty entry.
     private void GetListFromUser()
     {
+        // throw away anything typed during the 5-second countdown
+        while (Console.KeyAvailable)
+        {
+            Console.ReadKey(true);
+        }
+
         DateTime endTime = DateTime.Now.AddSeconds(GetDuration());
+        string current = "";
 
         while (DateTime.Now < endTime)
         {
-            if (Console.ReadLine() != "")
+            if (Console.KeyAvailable)
             {
-                _count++;
+                ConsoleKeyInfo key = Console.ReadKey(true);   // true = don't echo; we echo it ourselves
+
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    Console.WriteLine();
+                    if (current.Trim() != "")
+                    {
+                        _count++;
+                    }
+                    current = "";
+                }
+                else if (key.Key == ConsoleKey.Backspace)
+                {
+                    if (current.Length > 0)
+                    {
+                        current = current.Substring(0, current.Length - 1);
+                        Console.Write("\b \b");
+                    }
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    current += key.KeyChar;
+                    Console.Write(key.KeyChar);
+                }
+            }
+            else
+            {
+                Thread.Sleep(20);   // short nap so the loop doesn't max out the CPU
             }
         }
+
+        Console.WriteLine();
     }
 
-    // Goal: start message, prompt, collect the list, show how many items were entered, end message.
     public override void Run()
     {
     DisplayStartingMessage();
     DisplayPrompt();
     GetListFromUser();
-    Console.WriteLine($"You found {_count} things to be greatful for in {GetDuration()} seconds!");
+    Console.WriteLine($"You found {_count} things to be grateful for in {GetDuration()} seconds!");
     DisplayEndingMessage();
     }
 }
