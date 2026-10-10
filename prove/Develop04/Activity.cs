@@ -33,7 +33,7 @@ public abstract class Activity
     {
         Console.Clear();
         Console.WriteLine(_name + "\n" + _description);
-        Console.Write("How long would you like your session to last?");
+        Console.Write("How long would you like your session to last? ");
         _duration = int.Parse(Console.ReadLine());
 
         Console.WriteLine("Get ready! ");
