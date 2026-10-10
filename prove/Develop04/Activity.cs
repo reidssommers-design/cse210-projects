@@ -37,15 +37,15 @@ public abstract class Activity
         _duration = int.Parse(Console.ReadLine());
 
         Console.WriteLine("Get ready! ");
-        ShowSpinner(3);
+        ShowSpinner(4);
     }
 
     public void DisplayEndingMessage()
     {
         Console.WriteLine("Congratulations!");
-        ShowSpinner(1);
+        ShowSpinner(3);
         Console.WriteLine($"You have completed another {_duration} seconds of the {_name} Activity.");
-        ShowSpinner(1);
+        ShowSpinner(3);
     }
 
     public void ShowCountDown(int seconds)

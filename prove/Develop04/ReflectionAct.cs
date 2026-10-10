@@ -47,6 +47,8 @@ public class ReflectionActivity : Activity
     // Goal: show the prompt, then wait for the user to press Enter before moving on.
     private void DisplayPrompt()
     {
+        Console.Write("Press Enter when you're ready..."); 
+        Console.ReadLine();
         Console.WriteLine(GetRandomPrompt());
     }
 
