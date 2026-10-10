@@ -6,7 +6,6 @@ public class ReflectionActivity : Activity
     private List<string> _questions;
     private List<string> _unusedPrompts = new List<string>();
     private List<string> _unusedQuestions = new List<string>();
-    private Random _random = new Random();
 
     public ReflectionActivity() : base("Reflection Activity", "This activity will help you reflect on times in your life when you have shown strength and resilience. This will help you recognize the power you have and how you can use it in other aspects of your life.")
     {

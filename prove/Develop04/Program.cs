@@ -16,7 +16,7 @@ class Program
             Console.WriteLine("  2. Start Reflection Activity");
             Console.WriteLine("  3. Start Listing Activity");
             Console.WriteLine("  4. Quit");
-            Console.WriteLine("Select a choice to continue: ");
+            Console.Write("Select a choice to continue: ");
 
             int opt;
             if (!int.TryParse(Console.ReadLine(), out opt) || opt <= 0)
