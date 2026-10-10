@@ -65,6 +65,9 @@ public class ReflectionActivity : Activity
     // Goal: start message, prompt, questions, end message.
     public override void Run()
     {
-        
+    DisplayStartingMessage();
+    DisplayPrompt();
+    DisplayQuestions();
+    DisplayEndingMessage();
     }
 }

@@ -26,6 +26,8 @@ class Program
                     breathe.Run();
                     break;
                 case 2:
+                    ReflectionActivity reflect = new ReflectionActivity();
+                    reflect.Run();
                     break;
                 case 3:
                     break;
