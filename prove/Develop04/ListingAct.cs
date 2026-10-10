@@ -29,15 +29,32 @@ public class ListingActivity : Activity
     // Goal: show the prompt, then count down 5 seconds so the user can think before listing.
     private void DisplayPrompt()
     {
+        Console.WriteLine(GetRandomPrompt());
+        Console.WriteLine("You will have 5 seconds to think before you have to type :)");
+        ShowCountDown(5);
     }
 
     // Goal: until the duration is up, read what the user types and add 1 to _count for each non-empty entry.
     private void GetListFromUser()
     {
+        DateTime endTime = DateTime.Now.AddSeconds(GetDuration());
+
+        while (DateTime.Now < endTime)
+        {
+            if (Console.ReadLine() != "")
+            {
+                _count++;
+            }
+        }
     }
 
     // Goal: start message, prompt, collect the list, show how many items were entered, end message.
     public override void Run()
     {
+    DisplayStartingMessage();
+    DisplayPrompt();
+    GetListFromUser();
+    Console.WriteLine($"You found {_count} things to be greatful for in {GetDuration()} seconds!");
+    DisplayEndingMessage();
     }
 }
