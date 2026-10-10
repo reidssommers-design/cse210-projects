@@ -8,7 +8,7 @@ public abstract class Activity
     private string _description;
     private int _duration;
 
-    private void ShowSpinner(int time = 4)
+    public void ShowSpinner(int time = 4)
     {
         List<string> _spinners = new List<string> { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" };
         for (int i = 0; i < time * 10; i++)
@@ -57,6 +57,10 @@ public abstract class Activity
     public int GetDuration()
     {
         return _duration;
+    }
+    protected void SetDuration(int seconds)
+    {
+        _duration = seconds;
     }
 
     public abstract void Run();

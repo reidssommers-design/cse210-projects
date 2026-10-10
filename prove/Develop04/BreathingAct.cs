@@ -12,18 +12,23 @@ public class BreathingActivity : Activity
         DisplayStartingMessage();
         int totalDuration = GetDuration();
 
-        int sessions = totalDuration / 5; //floor function from desmos
-        if (sessions % 2 == 1)
+        int rounded = Math.Max(10, ((totalDuration + 9) / 10) * 10);
+        if (rounded != totalDuration)
         {
-            sessions--;
+            Console.WriteLine($"Rounding up to {rounded} seconds so you get every full breath.");
+            SetDuration(rounded);
+            totalDuration = rounded;
+            ShowSpinner(2);
         }
+
+        int sessions = totalDuration / 5;
         while (sessions > 0)
         {
             sessions--;
-            Console.WriteLine("Breath in...");
+            Console.WriteLine("Breathe in...");
             ShowCountDown(5);
             sessions--;
-            Console.WriteLine("Breath out...");
+            Console.WriteLine("Breathe out...");
             ShowCountDown(5);
         }
 
