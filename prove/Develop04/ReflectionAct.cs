@@ -1,6 +1,5 @@
 using System;
 
-// Goal: have the user reflect on a past moment of strength, using a random prompt and random questions.
 public class ReflectionActivity : Activity
 {
     private List<string> _prompts;
@@ -30,21 +29,18 @@ public class ReflectionActivity : Activity
         };
     }
 
-    // Goal: return one random prompt from _prompts.
     private string GetRandomPrompt()
     {
         int randomIndex = Random.Shared.Next(_prompts.Count);
         return _prompts[randomIndex];
     }
 
-    // Goal: return one random question from _questions.
     private string GetRandomQuestion()
     {
         int randomIndex = Random.Shared.Next(_questions.Count);
         return _questions[randomIndex];
     }
 
-    // Goal: show the prompt, then wait for the user to press Enter before moving on.
     private void DisplayPrompt()
     {
         Console.Write("Press Enter when you're ready..."); 
@@ -52,7 +48,6 @@ public class ReflectionActivity : Activity
         Console.WriteLine(GetRandomPrompt());
     }
 
-    // Goal: until the duration is up, show a random question and pause with the spinner after each.
     private void DisplayQuestions()
     {
         DateTime endTime = DateTime.Now.AddSeconds(GetDuration());
@@ -64,7 +59,6 @@ public class ReflectionActivity : Activity
         }
     }
 
-    // Goal: start message, prompt, questions, end message.
     public override void Run()
     {
     DisplayStartingMessage();
