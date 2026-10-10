@@ -55,7 +55,8 @@ public class ReflectionActivity : Activity
         while (DateTime.Now < endTime)
         {
             Console.WriteLine(GetRandomQuestion());
-            ShowSpinner(10);
+            int remaining = (int)Math.Ceiling((endTime - DateTime.Now).TotalSeconds);
+            ShowSpinner(Math.Min(10, remaining));
         }
     }
 
