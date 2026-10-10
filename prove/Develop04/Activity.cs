@@ -8,14 +8,18 @@ public abstract class Activity
     private string _description;
     private int _duration;
 
-    public void ShowSpinner(int time = 4)
+    public void ShowSpinner(int seconds = 4)
     {
-        List<string> _spinners = new List<string> { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" };
-        for (int i = 0; i < time * 10; i++)
+        List<string> spinners = new List<string> {"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
+        DateTime endTime = DateTime.Now.AddSeconds(seconds);
+        int i = 0;
+
+        while (DateTime.Now < endTime)
         {
-            Console.Write(_spinners[i % _spinners.Count] + "   ");
+            Console.Write(spinners[i % spinners.Count] + "   ");
             Thread.Sleep(50);
             Console.Write("\b\b\b\b");
+            i++;
         }
     }
     public Activity(string name, string description)
