@@ -30,7 +30,22 @@ public class ListingActivity : Activity
         ShowCountDown(5);
     }
 
-    private void GetListFromUser()
+    private void GetListFromUser()  
+    //DISCLAIMER! I had claude review my original function for this part because it would wait on Console.ReadLine() even if the timer was out.
+    //I understand how to write this program and can provide the origanal code:
+    //     private void GetListFromUser()
+    // {
+    //     DateTime endTime = DateTime.Now.AddSeconds(GetDuration());
+    //
+    //     while (DateTime.Now < endTime)
+    //     {
+    //         if (Console.ReadLine() != "")
+    //         {
+    //             _count++;
+    //         }
+    //     }
+    // }
+
     {
         // throw away anything typed during the 5-second countdown
         while (Console.KeyAvailable)
