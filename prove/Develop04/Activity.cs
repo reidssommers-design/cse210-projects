@@ -7,8 +7,14 @@ public abstract class Activity
     private string _name;
     private string _description;
     private int _duration;
+ 
+    public Activity(string name, string description)
+    {
+        _name = name;
+        _description = description;
+    }
 
-    public void ShowSpinner(int seconds = 4)
+   public void ShowSpinner(int seconds = 4)
     {
         List<string> spinners = new List<string> {"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
         DateTime endTime = DateTime.Now.AddSeconds(seconds);
@@ -22,12 +28,6 @@ public abstract class Activity
             i++;
         }
     }
-    public Activity(string name, string description)
-    {
-        _name = name;
-        _description = description;
-    }
-
     
     public void DisplayStartingMessage()
     {
@@ -72,6 +72,19 @@ public abstract class Activity
     {
         _duration = seconds;
     }
+
+    protected string PickNoRepeat(List<string> source, List<string> remaining)
+{
+    if (remaining.Count == 0)
+    {
+        remaining.AddRange(source);
+    }
+
+    int index = Random.Shared.Next(remaining.Count);
+    string item = remaining[index];
+    remaining.RemoveAt(index);
+    return item;
+}
 
     public abstract void Run();
 }

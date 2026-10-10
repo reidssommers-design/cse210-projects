@@ -4,6 +4,7 @@ public class ListingActivity : Activity
 {
     private List<string> _prompts;
     private int _count;
+    private List<string> _unusedPrompts = new List<string>();
 
     public ListingActivity() : base("Listing Activity", "This activity will help you reflect on the good things in your life by having you list as many things as you can in a certain area.")
     {
@@ -19,8 +20,7 @@ public class ListingActivity : Activity
 
     private string GetRandomPrompt()
     {
-        int randomIndex = Random.Shared.Next(_prompts.Count);
-        return _prompts[randomIndex];
+        return PickNoRepeat(_prompts, _unusedPrompts);
     }
 
     private void DisplayPrompt()
