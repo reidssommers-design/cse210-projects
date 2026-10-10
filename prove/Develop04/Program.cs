@@ -17,8 +17,12 @@ class Program
             Console.WriteLine("  3. Start Listing Activity");
             Console.WriteLine("  4. Quit");
             Console.WriteLine("Select a choice to continue: ");
-            int opt = int.Parse(Console.ReadLine());
 
+            int opt;
+            if (!int.TryParse(Console.ReadLine(), out opt) || opt <= 0)
+            {
+                continue;
+            }
             switch (opt)
             {
                 case 1:
