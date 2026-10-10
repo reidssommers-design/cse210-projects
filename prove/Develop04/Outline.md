@@ -1,8 +1,5 @@
 # Mindfulness Program: Design Document
 
-## Files to Add to `prove/Develop04/`
-`Program.cs` and `Develop04.csproj` already exist. Add these:
-
 | File | Class | Purpose |
 |---|---|---|
 | `Activity.cs` | `Activity` (base) | Shared name, description, duration, start/end messages, spinner, countdown |

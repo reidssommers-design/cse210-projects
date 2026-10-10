@@ -22,6 +22,7 @@ class Program
             switch (opt)
             {
                 case 1:
+
                     break;
                 case 2:
                     break;
@@ -37,10 +38,8 @@ class Program
     }
     static void Main(string[] args)
     {
-        Spinner spinny = new Spinner();
-
+        
         PrintMenu();
-        spinny.PrintSpinners(10);
 
     }
 }
