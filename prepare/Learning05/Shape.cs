@@ -20,7 +20,8 @@ public class Shape
     // Derived classes override this. The area is never stored; it is computed on demand.
     public virtual double GetArea()
     {
-        // TODO: decide on a sensible default (or make Shape abstract instead)
+        // A generic shape has no dimensions, so there is no meaningful area.
+        // Every derived class overrides this with its own formula.
         return 0;
     }
 }

@@ -9,7 +9,6 @@ public class Square : Shape
 
     public override double GetArea()
     {
-        // TODO: return the area of a square
-        return 0;
+        return _side * _side;
     }
 }
