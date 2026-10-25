@@ -1,16 +1,12 @@
 using System;
 
-/// <summary>
-/// Must be done _target times. Each recording earns points;
-/// the recording that hits the target also earns the bonus.
-/// </summary>
+
 public class ChecklistGoal : Goal
 {
     private int _amountCompleted;
     private int _target;
     private int _bonus;
 
-    // amountCompleted defaults to 0 for new goals; loading passes the saved value.
     public ChecklistGoal(string name, string description, int points, int target, int bonus, int amountCompleted = 0)
         : base(name, description, points)
     {
@@ -21,27 +17,34 @@ public class ChecklistGoal : Goal
 
     public override int RecordEvent()
     {
-        // TODO: if already complete -> return 0.
-        //       else _amountCompleted++; points = GetPoints();
-        //       if now complete, points += _bonus. Return points.
-        throw new NotImplementedException();
+        if (IsComplete())
+        {
+            return 0;
+        }
+
+        _amountCompleted++;
+        int earned = GetPoints();
+
+        if (IsComplete())
+        {
+            earned += _bonus;
+        }
+
+        return earned;
     }
 
     public override bool IsComplete()
     {
-        // TODO: _amountCompleted >= _target
-        throw new NotImplementedException();
+        return _amountCompleted >= _target;
     }
 
     public override string GetDetailsString()
     {
-        // TODO: base.GetDetailsString() + " -- Currently completed: {_amountCompleted}/{_target}"
-        throw new NotImplementedException();
+        return $"{base.GetDetailsString()} -- Currently completed: {_amountCompleted}/{_target}";
     }
 
     public override string GetStringRepresentation()
     {
-        // TODO: "ChecklistGoal:{name},{description},{points},{_bonus},{_target},{_amountCompleted}"
-        throw new NotImplementedException();
+        return $"ChecklistGoal:{GetShortName()},{GetDescription()},{GetPoints()},{_bonus},{_target},{_amountCompleted}";
     }
 }
