@@ -4,5 +4,6 @@
     "plaintext": false,
     "markdown": false,
     "csharp": false
-  }
+  },
+  "dotnet.defaultSolution": "cse210-student-template.sln"
 }
