@@ -1,6 +1,5 @@
 using System;
 
-/// <summary>Never completes. Every recording earns the same points.</summary>
 public class EternalGoal : Goal
 {
     public EternalGoal(string name, string description, int points)
@@ -10,15 +9,14 @@ public class EternalGoal : Goal
 
     public override int RecordEvent()
     {
-        // TODO: return GetPoints(). (No state to change.)
-        throw new NotImplementedException();
+        // No state to change - just pay out every time.
+        return GetPoints();
     }
 
     public override bool IsComplete() => false;
 
     public override string GetStringRepresentation()
     {
-        // TODO: "EternalGoal:{name},{description},{points}"
-        throw new NotImplementedException();
+        return $"EternalGoal:{GetShortName()},{GetDescription()},{GetPoints()}";
     }
 }
