@@ -74,9 +74,10 @@ public class GoalManager
         Console.WriteLine("  1. Simple Goal");
         Console.WriteLine("  2. Eternal Goal");
         Console.WriteLine("  3. Checklist Goal");
+        Console.WriteLine("  4. Progress Goal");
         int type = ReadInt("Which type of goal would you like to create? ");
 
-        if (type < 1 || type > 3)
+        if (type < 1 || type > 4)
         {
             Console.WriteLine("That's not a goal type. Back to the menu.");
             return;
@@ -84,7 +85,9 @@ public class GoalManager
 
         string name = ReadText("What is the name of your goal? ");
         string description = ReadText("What is a short description of it? ");
-        int points = ReadInt("What is the amount of points associated with this goal? ");
+        int points = ReadInt(type == 4
+            ? "How many points per unit of progress? "
+            : "What is the amount of points associated with this goal? ");
 
         if (type == 1)
         {
@@ -94,11 +97,17 @@ public class GoalManager
         {
             _goals.Add(new EternalGoal(name, description, points));
         }
-        else
+        else if (type == 3)
         {
             int target = ReadInt("How many times does this goal need to be accomplished for a bonus? ");
             int bonus = ReadInt("What is the bonus for accomplishing it that many times? ");
             _goals.Add(new ChecklistGoal(name, description, points, target, bonus));
+        }
+        else
+        {
+            int target = ReadInt("What is the total amount to reach (e.g. 500 pages)? ");
+            int bonus = ReadInt("What is the bonus for finishing? ");
+            _goals.Add(new ProgressGoal(name, description, points, target, bonus));
         }
 
         Console.WriteLine("Goal created!");
@@ -206,6 +215,11 @@ public class GoalManager
             case "ChecklistGoal":
                 // name, description, points, bonus, target, amountCompleted
                 return new ChecklistGoal(parts[0], parts[1], int.Parse(parts[2]),
+                    int.Parse(parts[4]), int.Parse(parts[3]), int.Parse(parts[5]));
+
+            case "ProgressGoal":
+                // name, description, pointsPerUnit, bonus, target, currentAmount
+                return new ProgressGoal(parts[0], parts[1], int.Parse(parts[2]),
                     int.Parse(parts[4]), int.Parse(parts[3]), int.Parse(parts[5]));
 
             default:

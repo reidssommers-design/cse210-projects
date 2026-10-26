@@ -1,9 +1,10 @@
 using System;
 
-// EXCEEDING REQUIREMENTS (fill this in as you add things - graders look for it):
-//   - (none yet)
-//   - e.g. NegativeGoal that subtracts points for bad habits
-//   - e.g. levels / titles based on score
+//   - ProgressGoal: a fourth goal type for working toward one big target
+//     (e.g. 500 pages). Each recording asks how much progress was made and
+//     earns points per unit, with a bonus when the target is reached.
+//     Progress is capped at the target, and it saves/loads like the others.
+
 
 class Program
 {
