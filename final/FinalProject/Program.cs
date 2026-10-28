@@ -39,17 +39,27 @@ internal static class Program
             Console.WriteLine($"Scope:     {scope.Identity}");
 
             var controller = new SweepController(generator, scope, DriveVpp, simulated ? 0 : HardwareSettleMs);
-            List<DataPoint> points = controller.Run(new LinearSweep(StartHz, StopHz, 50));
 
-            foreach (DataPoint p in points)
+            // Pass 1: coarse log sweep across the whole range.
+            List<DataPoint> points = controller.Run(new LogSweep(StartHz, StopHz, 40));
+
+            DataPoint? roughPeak = Peak(points);
+            if (roughPeak is null)
+            {
+                Console.Error.WriteLine("The scope returned no valid readings.");
+                return 1;
+            }
+
+            // Pass 2: fine linear sweep around the rough peak.
+            points.AddRange(controller.Run(new LinearSweep(roughPeak.FrequencyHz * 0.8, roughPeak.FrequencyHz * 1.2, 40)));
+
+            foreach (DataPoint p in points.Where(x => !double.IsNaN(x.Vpp)).OrderBy(x => x.FrequencyHz))
             {
                 Console.WriteLine($"{p.FrequencyHz,12:F1} Hz  {p.Vpp,8:F4} Vpp");
             }
 
-            DataPoint? best = Peak(points);
-            Console.WriteLine(best is null
-                ? "\nThe scope returned no valid readings."
-                : $"\nHighest reading: {best.FrequencyHz:F1} Hz ({best.Vpp:F4} Vpp)");
+            DataPoint best = Peak(points)!;
+            Console.WriteLine($"\nResonant frequency: {best.FrequencyHz:F1} Hz ({best.Vpp:F4} Vpp)");
             return 0;
         }
         catch (Exception e)

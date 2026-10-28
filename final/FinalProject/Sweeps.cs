@@ -1,8 +1,7 @@
 namespace TransformerSweep;
 
-/// Hands out frequencies one at a time. The base class does the counting;
-/// subclasses only say where point number i lands.
-
+// Hands out frequencies one at a time. The base class does the counting;
+// subclasses only say where point number i lands.
 public abstract class SweepStrategy
 {
     private int _index;
@@ -30,6 +29,7 @@ public abstract class SweepStrategy
         if (!HasMore) throw new InvalidOperationException("Sweep is finished.");
         return FrequencyAt(_index++);
     }
+
     //Frequency of point <paramref name="index"/>; 0 is the start and Count-1 is the stop
     protected abstract double FrequencyAt(int index);
 }
@@ -41,4 +41,13 @@ public class LinearSweep : SweepStrategy
 
     protected override double FrequencyAt(int index) =>
         StartHz + (StopHz - StartHz) * index / (Count - 1);
+}
+
+// Evenly spaced in log(Hz)
+public class LogSweep : SweepStrategy
+{
+    public LogSweep(double startHz, double stopHz, int count) : base(startHz, stopHz, count) { }
+
+    protected override double FrequencyAt(int index) =>
+        StartHz * Math.Pow(StopHz / StartHz, (double)index / (Count - 1));
 }
