@@ -2,6 +2,12 @@ namespace TransformerSweep;
 
 internal static class Program
 {
+    private const double StartHz = 1_000;
+    private const double StopHz = 100_000;
+    private const double DriveVpp = 1;   // drive level into the primary
+    private const double MaxVpp = 5;     // generator safety ceiling
+    private const int HardwareSettleMs = 300;
+
     // Usage:  dotnet run                          (simulated bench)
     //         dotnet run -- <10.10.10.4 <10.10.10.3>     (real hardware)
     private static int Main(string[] args)
@@ -24,7 +30,7 @@ internal static class Program
                 scopeTransport = new TcpTransport(args[1]);
             }
 
-            using var generator = new SignalGenerator(genTransport, 5);
+            using var generator = new SignalGenerator(genTransport, MaxVpp);
             using var scope = new Oscilloscope(scopeTransport);
 
             generator.Connect();
@@ -32,10 +38,18 @@ internal static class Program
             Console.WriteLine($"Generator: {generator.Identity}");
             Console.WriteLine($"Scope:     {scope.Identity}");
 
-            generator.SetSine(12_500, 1);
-            generator.OutputOn();
-            Thread.Sleep(simulated ? 0 : 300);
-            Console.WriteLine($"Secondary at 12.5 kHz: {scope.MeasurePeakToPeak():F4} Vpp");
+            var controller = new SweepController(generator, scope, DriveVpp, simulated ? 0 : HardwareSettleMs);
+            List<DataPoint> points = controller.Run(new LinearSweep(StartHz, StopHz, 50));
+
+            foreach (DataPoint p in points)
+            {
+                Console.WriteLine($"{p.FrequencyHz,12:F1} Hz  {p.Vpp,8:F4} Vpp");
+            }
+
+            DataPoint? best = Peak(points);
+            Console.WriteLine(best is null
+                ? "\nThe scope returned no valid readings."
+                : $"\nHighest reading: {best.FrequencyHz:F1} Hz ({best.Vpp:F4} Vpp)");
             return 0;
         }
         catch (Exception e)
@@ -44,4 +58,7 @@ internal static class Program
             return 1;
         }
     }
+
+    private static DataPoint? Peak(List<DataPoint> points) =>
+        points.Where(p => !double.IsNaN(p.Vpp)).MaxBy(p => p.Vpp);
 }
