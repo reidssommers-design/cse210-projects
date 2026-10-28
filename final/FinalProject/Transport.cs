@@ -1,24 +1,26 @@
-using System.Globalization;
 using System.Net.Sockets;
 using System.Text;
 
-// Instruments will use this class to send and recieve data
-// Instruments can only call Write and Query
+namespace TransformerSweep;
 
 public abstract class Transport
 {
     public abstract void Open();
-
-    /// Send a command that produces no reply.
+    
+    // Send a command that produces no reply
     public abstract void Write(string command);
-    /// Send a command and return the one-line reply.
+
+    // Send a command and return the one-line reply
     public abstract string Query(string command);
+
     public abstract void Close();
 }
 
+//Raw-socket SCPI. Siglent instruments listen on TCP port 5025 and expect newline-terminated commands
 public class TcpTransport : Transport
 {
-    private const int TIMEOUTMS = 5000;
+    private const int TimeoutMs = 5000;
+
     private readonly string _host;
     private readonly int _port;
     private TcpClient? _client;
@@ -33,7 +35,7 @@ public class TcpTransport : Transport
 
     public override void Open()
     {
-        _client = new TcpClient { ReceiveTimeout = TIMEOUTMS, SendTimeout = TIMEOUTMS };
+        _client = new TcpClient { ReceiveTimeout = TimeoutMs, SendTimeout = TimeoutMs };
         _client.Connect(_host, _port);
 
         NetworkStream stream = _client.GetStream();
