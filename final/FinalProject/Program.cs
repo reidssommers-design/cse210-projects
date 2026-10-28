@@ -1,18 +1,29 @@
+using System.Globalization;
+
 namespace TransformerSweep;
 
 internal static class Program
 {
-    private const double StartHz = 1_000;
-    private const double StopHz = 100_000;
-    private const double DriveVpp = 1;   // drive level into the primary
-    private const double MaxVpp = 5;     // generator safety ceiling
     private const int HardwareSettleMs = 300;
 
-    // Usage:  dotnet run                          (simulated bench)
-    //         dotnet run -- <10.10.10.4 <10.10.10.3>     (real hardware)
+    // Usage:  dotnet run                                       (simulated bench)
+    //         dotnet run -- --gen <sdg_ip> --scope <sds_ip>    (real hardware)
+    //         optional: --start <Hz> --stop <Hz> --amp <Vpp> --max-amp <Vpp>
     private static int Main(string[] args)
     {
-        bool simulated = args.Length != 2;
+        string? genIp = Option(args, "--gen");
+        string? scopeIp = Option(args, "--scope");
+        if ((genIp is null) != (scopeIp is null))
+        {
+            Console.Error.WriteLine("Give both --gen and --scope for real hardware, or neither for simulation.");
+            return 2;
+        }
+        bool simulated = genIp is null;
+
+        double startHz = Number(args, "--start", 1_000);
+        double stopHz = Number(args, "--stop", 100_000);
+        double driveVpp = Number(args, "--amp", 1);
+        double maxVpp = Number(args, "--max-amp", 5);
 
         try
         {
@@ -22,15 +33,15 @@ internal static class Program
                 var bench = new SimulatedBench();
                 genTransport = new SimulatedTransport(bench, "SIMULATED,SDG1032X+");
                 scopeTransport = new SimulatedTransport(bench, "SIMULATED,SDS824X HD");
-                Console.WriteLine("Simulated bench (resonance at 12.5 kHz). Pass <sdg_ip> <sds_ip> for real hardware.");
+                Console.WriteLine("Simulated bench (resonance at 12.5 kHz). Pass --gen <ip> --scope <ip> for real hardware.");
             }
             else
             {
-                genTransport = new TcpTransport(args[0]);
-                scopeTransport = new TcpTransport(args[1]);
+                genTransport = new TcpTransport(genIp!);
+                scopeTransport = new TcpTransport(scopeIp!);
             }
 
-            using var generator = new SignalGenerator(genTransport, MaxVpp);
+            using var generator = new SignalGenerator(genTransport, maxVpp);
             using var scope = new Oscilloscope(scopeTransport);
 
             generator.Connect();
@@ -38,10 +49,10 @@ internal static class Program
             Console.WriteLine($"Generator: {generator.Identity}");
             Console.WriteLine($"Scope:     {scope.Identity}");
 
-            var controller = new SweepController(generator, scope, DriveVpp, simulated ? 0 : HardwareSettleMs);
+            var controller = new SweepController(generator, scope, driveVpp, simulated ? 0 : HardwareSettleMs);
 
             // Pass 1: coarse log sweep across the whole range.
-            List<DataPoint> points = controller.Run(new LogSweep(StartHz, StopHz, 40));
+            List<DataPoint> points = controller.Run(new LogSweep(startHz, stopHz, 40));
 
             DataPoint? roughPeak = Peak(points);
             if (roughPeak is null)
@@ -53,9 +64,10 @@ internal static class Program
             // Pass 2: fine linear sweep around the rough peak.
             points.AddRange(controller.Run(new LinearSweep(roughPeak.FrequencyHz * 0.8, roughPeak.FrequencyHz * 1.2, 40)));
 
-            foreach (DataPoint p in points.Where(x => !double.IsNaN(x.Vpp)).OrderBy(x => x.FrequencyHz))
+            ResultExporter[] exporters = { new ConsoleReporter(), new CsvExporter("sweep.csv") };
+            foreach (ResultExporter exporter in exporters)
             {
-                Console.WriteLine($"{p.FrequencyHz,12:F1} Hz  {p.Vpp,8:F4} Vpp");
+                exporter.Export(points);
             }
 
             DataPoint best = Peak(points)!;
@@ -69,6 +81,17 @@ internal static class Program
         }
     }
 
+    // The token right after <paramref name="name"/>, or null if the flag isn't there
+    private static string? Option(string[] args, string name)
+    {
+        int i = Array.IndexOf(args, name);
+        return i >= 0 && i + 1 < args.Length ? args[i + 1] : null;
+    }
+
+    private static double Number(string[] args, string name, double fallback) =>
+        double.TryParse(Option(args, name), NumberStyles.Float, CultureInfo.InvariantCulture, out double v) ? v : fallback;
+
+    // The highest valid reading
     private static DataPoint? Peak(List<DataPoint> points) =>
         points.Where(p => !double.IsNaN(p.Vpp)).MaxBy(p => p.Vpp);
 }
