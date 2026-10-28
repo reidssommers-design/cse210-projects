@@ -24,6 +24,8 @@ internal static class Program
         double stopHz = Number(args, "--stop", 100_000);
         double driveVpp = Number(args, "--amp", 1);
         double maxVpp = Number(args, "--max-amp", 5);
+        int genChannel = Integer(args, "--gen-ch", 1);
+        int scopeChannel = Integer(args, "--scope-ch", 2);
 
         try
         {
@@ -41,8 +43,8 @@ internal static class Program
                 scopeTransport = new TcpTransport(scopeIp!);
             }
 
-            using var generator = new SignalGenerator(genTransport, maxVpp);
-            using var scope = new Oscilloscope(scopeTransport);
+            using var generator = new SignalGenerator(genTransport, maxVpp, genChannel);
+            using var scope = new Oscilloscope(scopeTransport, scopeChannel);
 
             generator.Connect();
             scope.Connect();
@@ -91,6 +93,9 @@ internal static class Program
     private static double Number(string[] args, string name, double fallback) =>
         double.TryParse(Option(args, name), NumberStyles.Float, CultureInfo.InvariantCulture, out double v) ? v : fallback;
 
+    private static int Integer(string[] args, string name, int fallback) =>
+    int.TryParse(Option(args, name), out int v) ? v : fallback;
+    
     // The highest valid reading
     private static DataPoint? Peak(List<DataPoint> points) =>
         points.Where(p => !double.IsNaN(p.Vpp)).MaxBy(p => p.Vpp);

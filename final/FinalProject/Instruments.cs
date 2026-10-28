@@ -2,10 +2,9 @@ using System.Globalization;
 
 namespace TransformerSweep;
 
-/// <summary>
 /// Common behavior for bench equipment: owns a transport, connects, identifies
 /// itself, and runs its own safe-shutdown step before the connection is dropped.
-/// </summary>
+
 public abstract class Instrument : IDisposable
 {
     private readonly Transport _transport;
@@ -29,7 +28,7 @@ public abstract class Instrument : IDisposable
 
     protected string Ask(string command) => _transport.Query(command);
 
-    /// <summary>Leave the instrument safe before disconnecting. Default: nothing to do.</summary>
+    // Leave the instrument safe before disconnecting. Default: nothing to do.
     protected virtual void Shutdown() { }
 
     public void Dispose()
@@ -45,14 +44,16 @@ public abstract class Instrument : IDisposable
     }
 }
 
-/// <summary>Siglent SDG1032X+, channel 1. The amplitude ceiling is enforced here so no caller can exceed it.</summary>
 public class SignalGenerator : Instrument
 {
     private readonly double _maxVpp;
+    private readonly int _channel;
 
-    public SignalGenerator(Transport transport, double maxVpp) : base(transport)
+    public SignalGenerator(Transport transport, double maxVpp, int channel = 1) : base(transport)
     {
+        if (channel is < 1 or > 2) throw new ArgumentOutOfRangeException(nameof(channel), "The SDG1032X+ has channels 1-2.");
         _maxVpp = maxVpp;
+        _channel = channel;
     }
 
     public void SetSine(double frequencyHz, double amplitudeVpp)
@@ -60,26 +61,29 @@ public class SignalGenerator : Instrument
         if (amplitudeVpp <= 0 || amplitudeVpp > _maxVpp)
             throw new ArgumentOutOfRangeException(nameof(amplitudeVpp), $"Must be above 0 and at most {_maxVpp} Vpp.");
 
-        Send(FormattableString.Invariant($"C1:BSWV WVTP,SINE,FRQ,{frequencyHz:F3},AMP,{amplitudeVpp:F4},OFST,0"));
+        Send(FormattableString.Invariant($"C{_channel}:BSWV WVTP,SINE,FRQ,{frequencyHz:F3},AMP,{amplitudeVpp:F4},OFST,0"));
     }
 
-    /// <summary>LOAD,HZ = high impedance, so the amplitude shown matches what a transformer primary actually sees.</summary>
-    public void OutputOn() => Send("C1:OUTP ON,LOAD,HZ");
+    public void OutputOn() => Send($"C{_channel}:OUTP ON,LOAD,HZ");
 
-    public void OutputOff() => Send("C1:OUTP OFF");
+    public void OutputOff() => Send($"C{_channel}:OUTP OFF");
 
     protected override void Shutdown() => OutputOff();
 }
 
-/// <summary>Siglent SDS824X HD, channel 2 (the secondary coil). Reads peak-to-peak voltage.</summary>
 public class Oscilloscope : Instrument
 {
-    public Oscilloscope(Transport transport) : base(transport) { }
+    private readonly int _channel;
 
-    /// <summary>Peak-to-peak volts, or NaN if the scope can't give a valid reading (it replies with asterisks).</summary>
+    public Oscilloscope(Transport transport, int channel = 2) : base(transport)
+    {
+        if (channel is < 1 or > 4) throw new ArgumentOutOfRangeException(nameof(channel), "The SDS824X HD has channels 1-4.");
+        _channel = channel;
+    }
+
     public double MeasurePeakToPeak()
     {
-        string reply = Ask("C2:PAVA? PKPK"); // e.g. "C2:PAVA PKPK,1.23E+00V"
+        string reply = Ask($"C{_channel}:PAVA? PKPK"); // e.g. "C2:PAVA PKPK,1.23E+00V"
         string number = reply.Split(',').Last().TrimEnd('V');
 
         return double.TryParse(number, NumberStyles.Float, CultureInfo.InvariantCulture, out double volts)
