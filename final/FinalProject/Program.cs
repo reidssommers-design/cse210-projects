@@ -8,7 +8,9 @@ internal static class Program
 
     // Usage:  dotnet run                                       (simulated bench)
     //         dotnet run -- --gen <sdg_ip> --scope <sds_ip>    (real hardware)
-    //         optional: --start <Hz> --stop <Hz> --amp <Vpp> --max-amp <Vpp>
+    //         optional: --start <Hz> --stop <Hz> --amp <Vpp> --max-amp <Vpp> --gen-ch <1-2> --scope-ch <1-4>
+    //                   --gen-ch <1-2> --scope-ch <1-4>
+    // Ctrl+C once: stop the sweep and switch the generator output off. Twice: force quit.
     private static int Main(string[] args)
     {
         string? genIp = Option(args, "--gen");
@@ -26,6 +28,14 @@ internal static class Program
         double maxVpp = Number(args, "--max-amp", 5);
         int genChannel = Integer(args, "--gen-ch", 1);
         int scopeChannel = Integer(args, "--scope-ch", 2);
+
+        using var cts = new CancellationTokenSource();
+        Console.CancelKeyPress += (sender, e) =>
+        {
+            if (cts.IsCancellationRequested) return;   // second Ctrl+C: let it kill the process
+            e.Cancel = true;                           // first Ctrl+C: don't kill us, unwind cleanly
+            cts.Cancel();
+        };
 
         try
         {
@@ -54,7 +64,13 @@ internal static class Program
             var controller = new SweepController(generator, scope, driveVpp, simulated ? 0 : HardwareSettleMs);
 
             // Pass 1: coarse log sweep across the whole range.
-            List<DataPoint> points = controller.Run(new LogSweep(startHz, stopHz, 40));
+            List<DataPoint> points = controller.Run(new LogSweep(startHz, stopHz, 40), cts.Token);
+
+            if (cts.IsCancellationRequested)
+            {
+                Console.Error.WriteLine("Cancelled. Generator output is off.");
+                return 130;
+            }
 
             DataPoint? roughPeak = Peak(points);
             if (roughPeak is null)
@@ -64,7 +80,7 @@ internal static class Program
             }
 
             // Pass 2: fine linear sweep around the rough peak.
-            points.AddRange(controller.Run(new LinearSweep(roughPeak.FrequencyHz * 0.8, roughPeak.FrequencyHz * 1.2, 40)));
+            points.AddRange(controller.Run(new LinearSweep(roughPeak.FrequencyHz * 0.8, roughPeak.FrequencyHz * 1.2, 40), cts.Token));
 
             ResultExporter[] exporters = { new ConsoleReporter(), new CsvExporter("sweep.csv") };
             foreach (ResultExporter exporter in exporters)
@@ -92,11 +108,3 @@ internal static class Program
 
     private static double Number(string[] args, string name, double fallback) =>
         double.TryParse(Option(args, name), NumberStyles.Float, CultureInfo.InvariantCulture, out double v) ? v : fallback;
-
-    private static int Integer(string[] args, string name, int fallback) =>
-    int.TryParse(Option(args, name), out int v) ? v : fallback;
-    
-    // The highest valid reading
-    private static DataPoint? Peak(List<DataPoint> points) =>
-        points.Where(p => !double.IsNaN(p.Vpp)).MaxBy(p => p.Vpp);
-}
